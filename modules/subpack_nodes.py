@@ -28,30 +28,9 @@ class UltralyticsDetectorProvider:
 
     CATEGORY = "ImpactPack"
 
-    def doit(self, model_name):
-        model_path = folder_paths.get_full_path("ultralytics", model_name)
-
-        if model_path is None:
-            print(f"[Impact Subpack] model file '{model_name}' is not found in one of the following directories:")
-
-            cands = []
-            cands.extend(folder_paths.get_folder_paths("ultralytics"))
-            if model_name.startswith('bbox/'):
-                cands.extend(folder_paths.get_folder_paths("ultralytics_bbox"))
-            elif model_name.startswith('segm/'):
-                cands.extend(folder_paths.get_folder_paths("ultralytics_segm"))
-
-            formatted_cands = "\n\t".join(cands)
-            print(f'\t{formatted_cands}\n')
-
-            raise ValueError(f"[Impact Subpack] model file '{model_name}' is not found.")
-
+    def doit(self, model_path):
         model = subcore.load_yolo(model_path)
-
-        if model_name.startswith("bbox"):
-            return subcore.UltraBBoxDetector(model), subcore.NO_SEGM_DETECTOR()
-        else:
-            return subcore.UltraBBoxDetector(model), subcore.UltraSegmDetector(model)
+        return subcore.UltraBBoxDetector(model), subcore.NO_SEGM_DETECTOR()
 
 
 NODE_CLASS_MAPPINGS = {
